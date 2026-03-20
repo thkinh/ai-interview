@@ -1,0 +1,48 @@
+type|name|content
+concept|react|React is a JavaScript library for building user interfaces using components.
+concept|component|A component is a reusable piece of UI that can be functional or class-based.
+concept|jsx|JSX is a syntax extension that allows writing HTML-like code inside JavaScript.
+concept|virtual_dom|The Virtual DOM is a lightweight copy of the real DOM used to optimize updates.
+concept|props|Props are inputs passed from parent to child components.
+concept|state|State is a built-in object that stores dynamic data in a component.
+concept|hooks|Hooks allow functional components to use state and lifecycle features.
+hook|useState|useState is a hook used to add state to functional components.
+hook|useEffect|useEffect is used to handle side effects like data fetching or subscriptions.
+hook|useContext|useContext is used to access context values without prop drilling.
+hook|useRef|useRef is used to persist values across renders without causing re-renders.
+hook|useMemo|useMemo memoizes computed values to optimize performance.
+hook|useCallback|useCallback memoizes functions to prevent unnecessary re-renders.
+concept|lifecycle|Lifecycle methods describe different phases of a component's life.
+concept|rendering|Rendering is the process of displaying UI based on state and props.
+concept|conditional_rendering|Conditional rendering allows rendering UI based on conditions.
+concept|list_rendering|List rendering uses arrays and keys to render multiple elements.
+concept|key|Keys help React identify which items have changed in a list.
+concept|event_handling|React handles events using camelCase syntax like onClick.
+concept|forms|Forms in React are usually controlled using state.
+concept|controlled_component|A controlled component is an input element controlled by React state.
+concept|uncontrolled_component|An uncontrolled component manages its own state using refs.
+concept|context|Context provides a way to share values globally without passing props.
+concept|prop_drilling|Prop drilling is passing props through many levels of components.
+concept|router|React Router is used for navigation in single-page applications.
+concept|spa|A Single Page Application loads a single HTML page and dynamically updates content.
+concept|fragment|Fragments allow grouping elements without adding extra nodes to the DOM.
+concept|portal|Portals allow rendering components outside the main DOM hierarchy.
+concept|strict_mode|StrictMode helps identify potential problems in an application.
+concept|error_boundary|Error boundaries catch JavaScript errors in components.
+concept|lazy_loading|Lazy loading loads components only when needed to improve performance.
+concept|code_splitting|Code splitting divides code into smaller bundles for faster loading.
+concept|memo|React.memo prevents unnecessary re-rendering of components.
+concept|reconciliation|Reconciliation is React's process of updating the DOM efficiently.
+concept|fiber|Fiber is React's internal algorithm for scheduling rendering work.
+concept|state_lifting|State lifting moves shared state to a common parent component.
+concept|custom_hook|A custom hook is a reusable function that uses React hooks.
+concept|dependency_array|The dependency array in useEffect controls when the effect runs.
+concept|cleanup|Cleanup functions in useEffect prevent memory leaks.
+concept|batching|React batches multiple state updates into a single render.
+concept|concurrent_rendering|Concurrent rendering allows React to interrupt rendering work.
+concept|hydration|Hydration attaches event listeners to server-rendered HTML.
+concept|ssr|Server-side rendering generates HTML on the server for better SEO.
+concept|csr|Client-side rendering renders content in the browser.
+concept|vite|Vite is a fast build tool often used with React projects.
+concept|webpack|Webpack is a module bundler used in many React setups.
+concept|babel|Babel transpiles modern JavaScript and JSX into compatible code.

@@ -1,0 +1,10 @@
+services:
+  chroma:
+    image: chromadb/chroma
+    ports:
+      - "15000:8000"
+    volumes:
+      - chroma_data:/data
+
+volumes:
+  chroma_data:

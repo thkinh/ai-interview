@@ -1,0 +1,52 @@
+concept|filesystem|The Linux filesystem is hierarchical, starting from the root directory /.
+command|ls|The ls command lists directory contents.
+command|cd|The cd command changes the current directory.
+command|pwd|The pwd command prints the current working directory.
+command|cp|The cp command copies files and directories.
+command|mv|The mv command moves or renames files and directories.
+command|rm|The rm command removes files or directories.
+command|mkdir|The mkdir command creates new directories.
+command|touch|The touch command creates empty files or updates timestamps.
+concept|permissions|Linux uses read, write, and execute permissions for user, group, and others.
+command|chmod|The chmod command changes file permissions.
+command|chown|The chown command changes file ownership.
+concept|process|A process is an instance of a running program.
+command|ps|The ps command displays running processes.
+command|top|The top command shows real-time system processes.
+command|kill|The kill command sends signals to processes.
+concept|package_manager|Linux distributions use package managers like apt, yum, or pacman.
+command|apt|apt is a package manager used in Debian-based systems.
+command|pacman|pacman is the package manager for Arch Linux.
+command|yum|yum is a package manager used in older Red Hat systems.
+concept|shell|The shell is a command-line interpreter such as bash or zsh.
+concept|bash|Bash is the most common Linux shell.
+command|echo|The echo command prints text to standard output.
+command|grep|The grep command searches for patterns in text.
+command|cat|The cat command displays file contents.
+command|less|The less command views file content page by page.
+command|head|The head command shows the beginning of a file.
+command|tail|The tail command shows the end of a file.
+concept|pipes|Pipes use the | symbol to pass output from one command to another.
+concept|redirection|Redirection uses >, >>, and < to control input and output.
+command|find|The find command searches for files in a directory hierarchy.
+command|locate|The locate command finds files using a database.
+concept|environment_variables|Environment variables store system-wide values like PATH.
+command|export|The export command sets environment variables.
+concept|ssh|SSH allows secure remote login to another machine.
+command|ssh|The ssh command connects to remote systems securely.
+command|scp|The scp command copies files over SSH.
+concept|cron|Cron is used to schedule recurring tasks.
+command|crontab|The crontab command edits cron jobs.
+concept|systemd|systemd is the init system used in most modern Linux distributions.
+command|systemctl|The systemctl command manages system services.
+concept|networking|Linux networking includes tools for managing connections and interfaces.
+command|ping|The ping command tests network connectivity.
+command|curl|The curl command transfers data from or to a server.
+command|wget|The wget command downloads files from the internet.
+concept|logs|System logs are usually stored in /var/log.
+command|dmesg|The dmesg command shows kernel messages.
+concept|disk|Disk usage and partitions are key parts of system management.
+command|df|The df command shows disk space usage.
+command|du|The du command shows directory space usage.
+command|mount|The mount command mounts filesystems.
+command|umount|The umount command unmounts filesystems.
