@@ -1,9 +1,11 @@
 from os import read
+import os
 import sys
 import chromadb
 
-CHROMA_HOST='localhost'
-CHROMA_PORT=15000
+CHROMA_HOST = os.getenv("CHROMA_HOST", "localhost")
+CHROMA_PORT = int(os.getenv("CHROMA_PORT", 15000))
+
 
 
 def readFile():
@@ -11,7 +13,8 @@ def readFile():
         print("Usage: python regisData.py <file_path>")
         sys.exit(1)
     file_path = sys.argv[1]
-    file_name = file_path.strip().split("-")
+    file_name = os.path.basename(file_path)
+    file_name = file_name.strip().split("-")
 
     try:
         with open(file_path, "r") as f:
@@ -33,7 +36,9 @@ def regisData(client, knowledges, tableName):
         client.delete_collection(name=tableName)
     except Exception:
         pass
+    print("Table name =", tableName)
     collection = client.create_collection(name=tableName)
+    print("Created table:", tableName)
 
     ids = []
     documents = []
