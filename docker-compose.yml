@@ -22,6 +22,11 @@ services:
       python3 TTS/server/server.py
       --model_name tts_models/en/vctk/vits
       --use_cuda true
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: [gpu]
 
   be:
     container_name: thkinh/ai-interview:latest
@@ -44,4 +49,4 @@ services:
 
 volumes:
   chroma_data:
-    ollama_data:
+  ollama_data:
