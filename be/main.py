@@ -1,12 +1,18 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Query
+from fastapi.responses import StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
 from typing import Dict, List
 from ollama import AsyncClient
+import httpx
+import io
 import chromadb
+from fastapi import FastAPI, Query, HTTPException
+from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 import uuid
 
 app = FastAPI(title="API servers for RAG interview")
+TTS_URL = "http://localhost:5002/api/tts"
 
 origins = [
     "http://localhost:5173",
@@ -50,6 +56,30 @@ async def get_context(topic: str):
 
 
 # --- Endpoints ---
+@app.get("/tts")
+async def get_speech(
+    text: str = Query(..., examples=["Hello from TTS"]),
+    speaker_id: str = Query("p376", examples=["p376"])):
+    async with httpx.AsyncClient() as client:
+        try:
+            params = {
+                "text": text,
+                "speaker_id": speaker_id
+            }
+            # Using timeout=None because GPU synthesis can take a few seconds
+            response = await client.get(TTS_URL, params=params, timeout=None)
+            if response.status_code != 200:
+                raise HTTPException(
+                    status_code=response.status_code,
+                    detail=f"TTS Server Error: {response.text}"
+                )
+            return StreamingResponse(
+                io.BytesIO(response.content),
+                media_type="audio/wav"
+            )
+        except httpx.RequestError as exc:
+            raise HTTPException(status_code=503, detail=f"Could not connect to TTS server: {exc}")
+
 @app.post("/api/start-interview", response_model=StartResponse)
 async def start_interview(req: StartInterviewRequest):
     """Starts a new interview session and returns the first question."""
