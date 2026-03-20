@@ -9,12 +9,13 @@ const InterviewRoom = () => {
   const hasStarted = useRef(false);
   const location = useLocation();
   const { topic } = location.state || {};
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:16000";
 
   const playAudio = async (text) => {
     try {
       // Tip: encodeURIComponent handles spaces/special chars in the URL
       const response = await fetch(
-        `http://localhost:16000/tts?text=${encodeURIComponent(text)}&speaker_id=p376`
+        `${API_BASE_URL}/tts?text=${encodeURIComponent(text)}&speaker_id=p376`
       );
       if (!response.ok) throw new Error("TTS request failed");
       // 3. Convert the response to a Blob (Binary Large Object)
@@ -35,7 +36,7 @@ const InterviewRoom = () => {
 
   const startInterview = async () => {
     try {
-      const response = await fetch("http://localhost:16000/api/start-interview", {
+      const response = await fetch(`${API_BASE_URL}/api/start-interview`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -57,7 +58,7 @@ const InterviewRoom = () => {
 
   const getResponse = async (prompt) => {
     try {
-      const response = await fetch("http://localhost:16000/api/answer", {
+      const response = await fetch(`${API_BASE_URL}/api/answer`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -10,14 +10,26 @@ from fastapi import FastAPI, Query, HTTPException
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 import uuid
+import os
 
-app = FastAPI(title="API servers for RAG interview")
-TTS_URL = "http://localhost:5002/api/tts"
+app = FastAPI(title="API server for RAG interview")
+BACKEND_HOST = os.getenv("BACKEND_HOST", "0.0.0.0")
+BACKEND_PORT = int(os.getenv("BACKEND_PORT", 16000))
 
-origins = [
-    "http://localhost:5173",
-    "http://127.0.0.1:5173",
-]
+# External Services
+TTS_URL = os.getenv("TTS_URL", "http://localhost:5002/api/tts")
+OLLAMA_HOST = os.getenv("OLLAMA_HOST", "http://localhost:11434")
+
+# Database/Model Settings
+MODEL_NAME = os.getenv("MODEL_NAME", "llama3.2:latest")
+
+CHROMA_HOST = os.getenv("CHROMA_HOST", "localhost")
+CHROMA_PORT = int(os.getenv("CHROMA_PORT", 15000))
+
+# CORS Origins (Parsed from a comma-separated string)
+# Example Env: ORIGINS=http://localhost:5173,http://127.0.0.1:5173
+raw_origins = os.getenv("ORIGINS", "http://localhost:5173,http://127.0.0.1:5173")
+origins = [origin.strip() for origin in raw_origins.split(",")]
 
 app.add_middleware(
     CORSMiddleware,
@@ -27,10 +39,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# --- Configuration ---
-MODEL_NAME = 'llama3.2:latest'
-CHROMA_HOST = "localhost"
-CHROMA_PORT = 15000
 
 sessions: Dict[str, dict] = {}
 
@@ -46,7 +54,7 @@ class AnswerRequest(BaseModel):
     user_answer: str
 
 chroma_client = chromadb.HttpClient(host=CHROMA_HOST, port=CHROMA_PORT)
-ollama_client = AsyncClient()
+ollama_client = AsyncClient(host=OLLAMA_HOST)
 
 async def get_context(topic: str):
     collection_name = f"{topic}-interview"
@@ -152,4 +160,5 @@ async def submit_answer(request: AnswerRequest):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=16000)
+    print(f"{origins} are allowed")
+    uvicorn.run(app, host=BACKEND_HOST, port=BACKEND_PORT)
