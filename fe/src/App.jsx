@@ -10,6 +10,29 @@ const InterviewRoom = () => {
   const location = useLocation();
   const { topic } = location.state || {};
 
+  const playAudio = async (text) => {
+    try {
+      // Tip: encodeURIComponent handles spaces/special chars in the URL
+      const response = await fetch(
+        `http://localhost:16000/tts?text=${encodeURIComponent(text)}&speaker_id=p376`
+      );
+      if (!response.ok) throw new Error("TTS request failed");
+      // 3. Convert the response to a Blob (Binary Large Object)
+      const blob = await response.blob();
+      // 4. Create a temporary URL for the browser to "see" the file
+      const url = window.URL.createObjectURL(blob);
+      // 5. Play it
+      const audio = new Audio(url);
+      audio.play();
+      // Clean up memory after playing (optional but good practice)
+      audio.onended = () => {
+        window.URL.revokeObjectURL(url);
+      };
+    } catch (err) {
+      console.error("Audio playback error:", err);
+    }
+  };
+
   const startInterview = async () => {
     try {
       const response = await fetch("http://localhost:16000/api/start-interview", {
@@ -26,6 +49,7 @@ const InterviewRoom = () => {
       setSessionId(data.session_id);
       setMessage(data.message);
       setMessages((prev) => [...prev, data.message]);
+      playAudio(data.message);
     } catch (error) {
       console.error(error);
     }
@@ -45,6 +69,7 @@ const InterviewRoom = () => {
       });
 
       const data = await response.json();
+      playAudio(data.message);
       return data;
     } catch (error) {
       console.error("Error getting response:", error);
