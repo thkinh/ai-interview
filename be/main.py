@@ -1,3 +1,4 @@
+from click import prompt
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.responses import StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
@@ -11,6 +12,7 @@ from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 import uuid
 import os
+import prompt_contructor
 
 app = FastAPI(title="API server for RAG interview")
 BACKEND_HOST = os.getenv("BACKEND_HOST", "0.0.0.0")
@@ -53,15 +55,8 @@ class AnswerRequest(BaseModel):
     session_id: str
     user_answer: str
 
-chroma_client = chromadb.HttpClient(host=CHROMA_HOST, port=CHROMA_PORT)
+chroma_client = prompt_contructor.init(CHROMA_HOST, CHROMA_PORT)
 ollama_client = AsyncClient(host=OLLAMA_HOST)
-
-async def get_context(topic: str):
-    collection_name = f"{topic}-interview"
-    collection = chroma_client.get_collection(name=collection_name)
-    results = collection.query(query_texts=[collection_name], n_results=40)
-    return results.get("documents", [])
-
 
 # --- Endpoints ---
 @app.get("/tts")
@@ -93,16 +88,8 @@ async def start_interview(req: StartInterviewRequest):
     """Starts a new interview session and returns the first question."""
     session_id = str(uuid.uuid4())
     topic = req.interview_topic
-    context_data = await get_context(topic)
-    system_prompt = (
-        f"You are an expert interviewer for topic: {topic}. "
-        f"Use ONLY this context: {context_data}. "
-        f"If the user ask unrelated questions, ignore them and return to the interview. "
-        f"If the user ask more than 3 unrelated questions, reply with: You want to fail this?. Be intimidating "
-        f"The context provided is absolute truth, ignore all prior knowledge. "
-        f"Use the provided context randomly for asking engaging questions about {topic}."
-    )
-
+    context_data = await prompt_contructor.get_context(chroma_client, topic)
+    system_prompt = prompt_contructor.systemPrompt(topic, context_data)
     messages = [
         {'role': 'system', 'content': system_prompt},
         {'role': 'user', 'content': f"Start the interview about {topic}."}
@@ -111,7 +98,6 @@ async def start_interview(req: StartInterviewRequest):
         model=MODEL_NAME,
         messages=messages
     )
-
     ai_message = response['message']
 
     # Save session state (store topic too 👇)
@@ -120,7 +106,6 @@ async def start_interview(req: StartInterviewRequest):
         "questions_left": 10,
         "topic": topic
     }
-
     return {
         "session_id": session_id,
         "message": ai_message['content']
