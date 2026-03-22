@@ -15,7 +15,7 @@ const InterviewRoom = () => {
     try {
       // Tip: encodeURIComponent handles spaces/special chars in the URL
       const response = await fetch(
-        `${API_BASE_URL}/tts?text=${encodeURIComponent(text)}&speaker_id=p376`
+        `${API_BASE_URL}/tts?text=${encodeURIComponent(text)}&speaker_id=p360`
       );
       if (!response.ok) throw new Error("TTS request failed");
       // 3. Convert the response to a Blob (Binary Large Object)

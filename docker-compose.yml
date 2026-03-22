@@ -14,19 +14,19 @@ services:
     volumes:
       - ollama_data:/root/.ollama
 
-        #tts:
-        #  image: ghcr.io/coqui-ai/tts
-        #  ports:
-        #    - "5002:5002"
-        #  entrypoint: >
-        #    python3 TTS/server/server.py
-        #    --model_name tts_models/en/vctk/vits
-        #    --use_cuda true
-        #  deploy:
-        #    resources:
-        #      reservations:
-        #        devices:
-        #          - capabilities: [gpu]
+  tts:
+    image: ghcr.io/coqui-ai/tts
+    ports:
+      - "5002:5002"
+    entrypoint: >
+      python3 TTS/server/server.py
+      --model_name tts_models/en/vctk/vits
+      --use_cuda true
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: [gpu]
 
   be:
     image: thkinh/ai-interview:1.1.0
@@ -35,6 +35,9 @@ services:
     depends_on:
       - chroma
       - ollama
+      - tts
+    env_file:
+      - .env
     environment:
       MODEL_NAME: llama3.2:latest   
       TTS_URL: http://tts:5002/api/tts

@@ -59,7 +59,7 @@ ollama_client = AsyncClient(host=OLLAMA_HOST)
 async def get_context(topic: str):
     collection_name = f"{topic}-interview"
     collection = chroma_client.get_collection(name=collection_name)
-    results = collection.query(query_texts=[topic], n_results=10)
+    results = collection.query(query_texts=[collection_name], n_results=40)
     return results.get("documents", [])
 
 
@@ -97,9 +97,10 @@ async def start_interview(req: StartInterviewRequest):
     system_prompt = (
         f"You are an expert interviewer for topic: {topic}. "
         f"Use ONLY this context: {context_data}. "
-        f"If users ask unrelated questions, ignore them and return to the interview. "
+        f"If the user ask unrelated questions, ignore them and return to the interview. "
+        f"If the user ask more than 3 unrelated questions, reply with: You want to fail this?. Be intimidating "
         f"The context provided is absolute truth, ignore all prior knowledge. "
-        f"Use the provided context for asking engaging questions about {topic}."
+        f"Use the provided context randomly for asking engaging questions about {topic}."
     )
 
     messages = [
@@ -116,7 +117,7 @@ async def start_interview(req: StartInterviewRequest):
     # Save session state (store topic too 👇)
     sessions[session_id] = {
         "messages": messages + [ai_message],
-        "questions_left": 3,
+        "questions_left": 10,
         "topic": topic
     }
 
@@ -127,14 +128,13 @@ async def start_interview(req: StartInterviewRequest):
 
 @app.post("/api/answer")
 async def submit_answer(request: AnswerRequest):
-    """Handles user answers and maintains the 3-question loop."""
+    """Handles user answers and maintains the 10-question loop."""
     session = sessions.get(request.session_id)
     if not session:
         raise HTTPException(status_code=404, detail="Session not found")
 
     session["questions_left"] -= 1
     num_left = session["questions_left"]
-    
     # Construct the next prompt
     if num_left == 0:
         user_prompt = f"{request.user_answer}. Conclude and rate me 1-10."
