@@ -38,26 +38,35 @@ const InterviewRoom = () => {
   const [message, setMessage] = useState("");
   const [sessionid, setSessionId] = useState("");
   const [userInput, setUserInput] = useState(""); // 👈 NEW
+  const [isMuted, setIsMute] = useState(false);
   const hasStarted = useRef(false);
   const location = useLocation();
   const { topic } = location.state || {};
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:16000";
 
+  const audioRef = useRef(null);
+  const urlRef = useRef(null);
   const playAudio = async (text) => {
     try {
-      // Tip: encodeURIComponent handles spaces/special chars in the URL
-      const response = await fetch(
-        `${API_BASE_URL}/tts?text=${encodeURIComponent(text)}&speaker_id=p360`
-      );
+      const response = await fetch(`${API_BASE_URL}/tts?text=${encodeURIComponent(text)}&speaker_id=p360`);
       if (!response.ok) throw new Error("TTS request failed");
-      // 3. Convert the response to a Blob (Binary Large Object)
+
       const blob = await response.blob();
-      // 4. Create a temporary URL for the browser to "see" the file
       const url = window.URL.createObjectURL(blob);
-      // 5. Play it
+
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.src = ""; // Force stop loading
+      }
+
       const audio = new Audio(url);
-      audio.play();
-      // Clean up memory after playing (optional but good practice)
+      audioRef.current = audio;
+      audio.muted = isMuted;
+
+      if (!isMuted) {
+        audio.play().catch(e => console.error("Playback blocked", e));
+      }
+
       audio.onended = () => {
         window.URL.revokeObjectURL(url);
       };
@@ -65,6 +74,30 @@ const InterviewRoom = () => {
       console.error("Audio playback error:", err);
     }
   };
+
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.muted = isMuted;
+      if (isMuted) {
+        audioRef.current.pause();
+      } else {
+        console.log("play");
+        audioRef.current.play().catch(() => {});
+      }
+    }
+  }, [isMuted]);
+
+  useEffect(() => {
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
+      }
+      if (urlRef.current) {
+        window.URL.revokeObjectURL(urlRef.current);
+      }
+    };
+  }, []);
 
   const startInterview = async () => {
     try {
@@ -131,11 +164,15 @@ const InterviewRoom = () => {
     }
   };
 
+  const toggleMute = () => {
+    setIsMute(!isMuted);
+  }
 
   useEffect(() => {
     if (hasStarted.current) return;
     hasStarted.current = true;
     startInterview();
+
   }, []);
 
   return (
@@ -168,7 +205,13 @@ const InterviewRoom = () => {
             value={userInput}                          // 👈 bind state
             onChange={(e) => setUserInput(e.target.value)} // 👈 capture input
           />
-          <button style={stylesRoom.submitButton} onClick={handleSubmit}> Submit Answer </button>
+
+          <div style={{display: 'flex', flexDirection: 'row', justifyContent:'right'}}>
+            <button onClick={toggleMute} style={isMuted ? stylesRoom.muteButtonActive : stylesRoom.muteButton}>
+              {isMuted ? '🔇 Unmute' : '🔊 Mute'}
+            </button>
+            <button style={stylesRoom.submitButton} onClick={handleSubmit}> Submit Answer </button>
+          </div>
         </section>
       </main>
     </div>
@@ -237,6 +280,27 @@ const stylesRoom = {
     display: 'flex', 
     justifyContent: 'space-between', 
     padding: '20px' 
+  },
+  muteButton: {
+    borderRadius: '4px',
+    border: 'none',
+    backgroundColor: 'inherit',
+    color: '#999999',
+    cursor: 'pointer',
+    alignSelf: 'flex-end',
+    fontWeight: 'bold',
+    padding: '12px 24px',
+    marginRight: '5px'
+  },
+  muteButtonActive: {
+    borderRadius: '4px',
+    border: 'none',
+    color: '#999999',
+    cursor: 'pointer',
+    alignSelf: 'flex-end',
+    fontWeight: 'bold',
+    padding: '12px 24px',
+    marginRight: '5px'
   },
   mainContainer: { 
     display: 'flex', 
