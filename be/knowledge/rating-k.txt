@@ -1,0 +1,46 @@
+concept|skills|Skills represent the candidate's ability to perform technical or job-related tasks correctly and efficiently.
+concept|questions|Questions evaluate how well a candidate understands concepts and communicates answers.
+concept|attitude|Attitude reflects the candidate's behavior, professionalism, and willingness to collaborate.
+====
+skills|problem_solving|The ability to analyze problems, break them into smaller parts, and produce logical solutions.
+skills|debugging|The ability to identify the root cause of errors and fix them systematically.
+skills|code_quality|Writing readable, maintainable, and well-structured code following best practices.
+skills|system_design|Understanding how to structure components into scalable and maintainable systems.
+skills|algorithm_knowledge|Understanding common algorithms and choosing appropriate ones for given problems.
+skills|data_structures|Knowledge of structures such as arrays, lists, stacks, queues, trees, and hash maps.
+skills|testing|Writing and understanding unit tests and integration tests to validate functionality.
+skills|performance_optimization|Improving system speed and efficiency by reducing unnecessary resource usage.
+skills|version_control|Using tools such as Git to track changes and collaborate with others.
+skills|documentation|Writing clear explanations of code functionality and usage.
+====
+questions|clarity|Providing answers that are clear, concise, and easy to understand.
+questions|accuracy|Providing technically correct answers without misconceptions.
+questions|completeness|Answering all parts of the question without missing key details.
+questions|confidence|Answering with certainty while remaining open to corrections.
+questions|examples|Using examples to explain technical concepts effectively.
+questions|step_by_step_reasoning|Explaining solutions in logical steps.
+questions|asking_clarification|Requesting clarification when the question is unclear.
+questions|handling_unknowns|Admitting lack of knowledge honestly when unsure.
+questions|technical_depth|Demonstrating deep understanding rather than memorized answers.
+====
+attitude|professionalism|Maintaining respectful and polite communication during the interview.
+attitude|avoiding_off_topic_discussion|The candidate avoids introducing unrelated details that do not help answer the question.
+attitude|staying_on_topic|The candidate keeps responses focused on the question without drifting into unrelated subjects.
+attitude|topic_discipline|The candidate maintains focus on the main subject throughout the response.
+attitude|honesty|Providing truthful answers without exaggeration.
+attitude|respect_for_feedback|Accepting corrections constructively.
+attitude|communication_style|Expressing thoughts clearly and respectfully.
+====
+rating|excellent|Performance exceeds expectations with strong technical and communication abilities.
+rating|good|Performance meets expectations with minor areas for improvement.
+rating|average|Performance shows basic competency but lacks depth or consistency.
+rating|below_average|Performance shows gaps in essential knowledge or communication.
+rating|poor|Performance does not meet basic expectations for the role.
+===
+evaluation|technical_score|A numerical score representing technical ability based on problem-solving and correctness.
+evaluation|communication_score|A numerical score representing clarity and explanation quality.
+evaluation|behavior_score|A numerical score representing professionalism and attitude.
+evaluation|overall_score|A combined score representing total candidate performance.
+evaluation|strengths|Key areas where the candidate demonstrated strong performance.
+evaluation|weaknesses|Areas where the candidate showed gaps or mistakes.
+evaluation|recommendation|A final hiring suggestion based on overall evaluation.
