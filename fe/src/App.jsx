@@ -1,6 +1,38 @@
 import { useRef, useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
 
+
+const Typewriter = ({ text, speed = 40, onUpdate }) => {
+  const [displayedText, setDisplayedText] = useState("");
+  const index = useRef(0);
+
+  useEffect(() => {
+    // Reset everything when text changes
+    index.current = 0;
+    setDisplayedText("");
+
+    const timer = setInterval(() => {
+      // Logic: Always slice from the ORIGINAL text based on the ref index
+      if (index.current < text.length) {
+        index.current += 1;
+        setDisplayedText(text.slice(0, index.current));
+      } else {
+        clearInterval(timer);
+      }
+      
+      if(onUpdate) onUpdate();
+    }, speed);
+
+    return () => clearInterval(timer);
+  }, [text, speed]);
+
+  return (
+    <span style={{ background: 'inherit', display: 'inline-block' }}>
+      {displayedText}
+    </span>
+  );
+};
+
 const InterviewRoom = () => {
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState("");
@@ -89,6 +121,17 @@ const InterviewRoom = () => {
     }
   };
 
+  const scrollRef = useRef(null);
+  const scrollToBottom = () => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTo({
+        top: scrollRef.current.scrollHeight,
+        behavior: 'auto' // Use 'auto' for typewriter to avoid "shaky" smooth scrolling
+      });
+    }
+  };
+
+
   useEffect(() => {
     if (hasStarted.current) return;
     hasStarted.current = true;
@@ -103,21 +146,17 @@ const InterviewRoom = () => {
       </header>
 
       <main style={stylesRoom.mainContainer}>
-        <section style={stylesRoom.aiSection}>
+        <section ref={scrollRef} style={stylesRoom.aiSection}>
           <h2 style={stylesRoom.label}>AI Interviewer</h2>
-
           <div style={stylesRoom.aiBubble}>
-            {messages.length === 0 ? (
-              "Starting interview..."
-            ) : (
+            {messages.length === 0 ? ("Starting interview...") : (
               messages.map((msg, index) => (
                 <div key={index} style={stylesRoom.messageBox}>
-                  {msg}
+                  {index === messages.length - 1 ? (<Typewriter text={msg} speed={10} onUpdate={scrollToBottom}/>) : (msg)}
                 </div>
               ))
             )}
           </div>
-
         </section>
 
         <section style={stylesRoom.userSection}>
