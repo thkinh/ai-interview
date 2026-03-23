@@ -37,8 +37,14 @@ const InterviewRoom = () => {
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState("");
   const [sessionid, setSessionId] = useState("");
-  const [userInput, setUserInput] = useState(""); // 👈 NEW
+  const [userInput, setUserInput] = useState(""); 
   const [isMuted, setIsMute] = useState(false);
+  const isMounted = useRef(true);
+  const [speakerId] = useState(() => {
+    const options = [225, 294, 233, 240, 253, 323, 345, 277, 300, 360];
+    const randomIndex = Math.floor(Math.random() * options.length);
+    return options[randomIndex];
+  });
   const hasStarted = useRef(false);
   const location = useLocation();
   const { topic } = location.state || {};
@@ -48,11 +54,17 @@ const InterviewRoom = () => {
   const urlRef = useRef(null);
   const playAudio = async (text) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/tts?text=${encodeURIComponent(text)}&speaker_id=p360`);
+      const response = await fetch(`${API_BASE_URL}/tts?text=${encodeURIComponent(text)}&speaker_id=p${speakerId}`);
       if (!response.ok) throw new Error("TTS request failed");
+      if (!isMounted.current) return;
 
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
+
+      if (!isMounted.current) {
+        window.URL.revokeObjectURL(url); // Clean up immediately if we left
+        return;
+      }
 
       if (audioRef.current) {
         audioRef.current.pause();
@@ -88,7 +100,9 @@ const InterviewRoom = () => {
   }, [isMuted]);
 
   useEffect(() => {
+    isMounted.current = true;
     return () => {
+      isMounted.current = false;
       if (audioRef.current) {
         audioRef.current.pause();
         audioRef.current = null;
@@ -172,7 +186,6 @@ const InterviewRoom = () => {
     if (hasStarted.current) return;
     hasStarted.current = true;
     startInterview();
-
   }, []);
 
   return (
@@ -345,6 +358,6 @@ const stylesRoom = {
     wordBreak: 'break-word'
   },
   label: { fontSize: '0.8rem', textTransform: 'uppercase', color: '#888' },
-  answerArea: { backgroundColor: '#252525', color: 'white', border: '1px solid #444', borderRadius: '8px', padding: '15px', minHeight: '150px', fontFamily: 'inherit' },
+  answerArea: { backgroundColor: '#252525', color: 'white', border: '1px solid #444', borderRadius: '8px', padding: '15px', minHeight: '100px', fontFamily: 'inherit' },
   submitButton: { alignSelf: 'flex-end', backgroundColor: '#4CAF50', color: 'white', border: 'none', padding: '12px 24px', borderRadius: '4px', fontWeight: 'bold', cursor: 'pointer' }
 };
